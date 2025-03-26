@@ -33,6 +33,7 @@ except ImportError:
 
 # Grok uses the OpenAI client with a different base URL
 GROK_AVAILABLE = OPENAI_AVAILABLE
+PERPLEXITY_AVAILABLE = OPENAI_AVAILABLE
 
 from config import config
 
@@ -58,7 +59,7 @@ class LLMService:
         Initialize the LLM service.
 
         Args:
-            provider: LLM provider (e.g., 'lmstudio', 'openai', 'anthropic', 'google', 'grok')
+            provider: LLM provider (e.g., 'lmstudio', 'openai', 'anthropic', 'google', 'grok', 'perplexity')
             base_url: Base URL for the LLM API
             api_key: API key for authentication (if None, will use provider-specific key)
             model: Model identifier to use
@@ -79,6 +80,8 @@ class LLMService:
                 self.api_key = config.GOOGLE_API_KEY
             elif provider == "grok":
                 self.api_key = config.GROK_API_KEY
+            elif provider == "perplexity":
+                self.api_key = config.PERPLEXITY_API_KEY
             else:  # lmstudio or other
                 self.api_key = config.LLM_API_KEY
         else:
@@ -87,9 +90,10 @@ class LLMService:
         # Initialize client based on provider
         self.client = None
 
-        if provider in ["lmstudio", "openai", "grok"]:
+        if provider in ["lmstudio", "openai", "grok", "perplexity"]:
             if OPENAI_AVAILABLE:
                 try:
+                    print(base_url, self.api_key)
                     self.client = OpenAI(base_url=base_url, api_key=self.api_key)
                     logger.info(f"Initialized {provider} client with model {model}")
                 except Exception as e:
@@ -126,6 +130,16 @@ class LLMService:
                 logger.warning(
                     "Google Generative AI package not installed or API key missing. Falling back to direct API calls."
                 )
+        elif provider == "perplexity":
+            if PERPLEXITY_AVAILABLE and self.api_key:
+                try:
+                    self.client = OpenAI(api_key=self.api_key, base_url=self.base_url)
+                    print(self.base_url)
+                    logger.info("Initialized Perplexity client with model %s", model)
+                except Exception as e:
+                    logger.warning("Error initializing Perplexity client: %s", e)
+                    logger.info("Falling back to direct API calls via requests")
+
 
     def generate_response(
         self,
@@ -161,7 +175,7 @@ class LLMService:
         for attempt in range(max_retries):
             try:
                 # Handle different providers
-                if self.provider in ["lmstudio", "openai", "grok"]:
+                if self.provider in ["lmstudio", "openai", "grok", "perplexity"]:
                     if self.client is not None:
                         # Use the OpenAI client
                         response = self.client.chat.completions.create(
