@@ -93,7 +93,6 @@ class LLMService:
         if provider in ["lmstudio", "openai", "grok", "perplexity"]:
             if OPENAI_AVAILABLE:
                 try:
-                    print(base_url, self.api_key)
                     self.client = OpenAI(base_url=base_url, api_key=self.api_key)
                     logger.info(f"Initialized {provider} client with model {model}")
                 except Exception as e:
