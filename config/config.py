@@ -57,6 +57,12 @@ LLM_PROVIDERS = {
         "api_key": "",  # User must provide
         "models": ["grok-1", "grok-2"],
     },
+    "perplexity": {
+        "name": "Perplexity AI",
+        "base_url": "https://api.perplexity.ai",
+        "api_key": "",  # User must provide
+        "models": ["sonar", "sonar-pro"],  # Example model names
+    },
 }
 
 # Topic list
