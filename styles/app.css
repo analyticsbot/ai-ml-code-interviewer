@@ -5,6 +5,7 @@
 
 .stTabs [data-baseweb="tab-list"] {
     gap: 24px;
+    display: flex;
 }
 
 .stTabs [data-baseweb="tab"] {
@@ -15,9 +16,38 @@
     gap: 1px;
     padding-top: 10px;
     padding-bottom: 10px;
+    flex: 1;
+    text-align: center;
+    min-width: 0;
+    color: #2c3e50;  /* Dark blue-grey for better readability */
+    font-weight: 500;  /* Slightly bolder text */
 }
 
 .stTabs [aria-selected="true"] {
     background-color: #e6f0ff;
     border-bottom: 2px solid #4e89e8;
+    color: #1a365d;  /* Darker blue for selected tab */
+    font-weight: 600;  /* Bolder text for selected tab */
+}
+
+/* Ensure tab content is centered and doesn't overflow */
+.stTabs [data-baseweb="tab"] > div {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Dark mode compatibility */
+@media (prefers-color-scheme: dark) {
+    .stTabs [data-baseweb="tab"] {
+        background-color: #2c3e50;  /* Darker background */
+        color: #e6f0ff;  /* Light blue-white text */
+    }
+    
+    .stTabs [aria-selected="true"] {
+        background-color: #1a365d;  /* Darker blue background for selected */
+        color: #ffffff;  /* White text for selected tab */
+        border-bottom: 2px solid #60a5fa;  /* Lighter blue border */
+    }
 }
